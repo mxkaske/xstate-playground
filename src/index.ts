@@ -1,5 +1,5 @@
-import { createMachine, interpret } from "xstate";
 import "./styles.css";
+import { toggleService } from "./toggle/utils";
 
 const app = document?.getElementById("app");
 
@@ -9,42 +9,17 @@ if (app) {
 <div>
   Open the <strong>Console</strong> to view the machine output.
 </div>
+<div>
+  <button id="toggle" onclick="toggle()">toggle</button>
+  <div id="toggle-state"></div>
+</div>
 `;
 }
 
-interface ToggleContext {
-  count: number;
+toggleService.start();
+
+function toggle() {
+  toggleService.send("TOGGLE");
 }
 
-type ToggleEvent = {
-  type: "TOGGLE";
-};
-
-// Edit your machine(s) here
-const machine = createMachine<ToggleContext, ToggleEvent>({
-  id: "machine",
-  initial: "inactive",
-  context: {
-    count: 0,
-  },
-  states: {
-    inactive: {
-      on: { TOGGLE: "active" },
-    },
-    active: {
-      on: { TOGGLE: "inactive" },
-    },
-  },
-});
-
-// Edit your service(s) here
-const service = interpret(machine).onTransition((state) => {
-  console.log(state.value);
-});
-
-service.start();
-
-service.send("TOGGLE");
-service.send("TOGGLE");
-
-console.log("hello world");
+window.toggle = toggle;
